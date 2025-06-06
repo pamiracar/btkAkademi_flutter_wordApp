@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedScreen,
         destinations: [
-          NavigationDestination(icon: Icon(Icons.list_alt), label: "Keleler"),
+          NavigationDestination(icon: Icon(Icons.list_alt), label: "Keleljer"),
           NavigationDestination(icon: Icon(Icons.add_circle_outline), label: "Ekle")
         ],
         onDestinationSelected: (value) {
