@@ -1,0 +1,6 @@
+*.c++ linguist-detectable=false
+*.swift linguist-detectable=false
+*.cmake linguist-detectable=false
+*.ruby linguist-detectable=false
+*.c linguist-detectable=false
+
