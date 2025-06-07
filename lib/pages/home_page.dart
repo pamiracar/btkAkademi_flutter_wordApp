@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_word_app/pages/add_word.dart';
 import 'package:flutter_word_app/pages/word_list.dart';
 import 'package:flutter_word_app/services/isar_services.dart';
 
@@ -17,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> getScreens(){
     return [
       WordList(isarService: widget.isarService,),
-      Center(child: Text("Kelime Ekleme Formu"),),
+      AddWordScreen(),
     ];
   }
 
