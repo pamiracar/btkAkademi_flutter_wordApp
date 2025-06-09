@@ -14,6 +14,8 @@ class Word {
     required this.englishWord,
     required this.turkishWord,
     required this.wordType,
+    this.story,
+    this.imageBytes
   });
 
   @override

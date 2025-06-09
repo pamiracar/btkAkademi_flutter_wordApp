@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_word_app/models/word.dart';
 import 'package:flutter_word_app/services/isar_services.dart';
+import 'package:isar/isar.dart';
 
 class WordList extends StatefulWidget {
   final IsarService isarService;
@@ -14,11 +17,13 @@ class _WordListState extends State<WordList> {
   late Future<List<Word>> _getAllWords;
   List<Word> _kelimeler = [];
 
+
   @override
   void initState() {
     super.initState();
     _getAllWords = _getWordsFromDB();
   }
+
 
   Future<List<Word>> _getWordsFromDB() async {
     return await widget.isarService.getAllWords();
@@ -27,6 +32,18 @@ class _WordListState extends State<WordList> {
   void _refreshWords() {
     setState(() {
       _getAllWords = _getWordsFromDB();
+    });
+  }
+
+  void _toggleUpdateWord(Word oAnkiKelime) async {
+    await widget.isarService.toogleWordLearned(oAnkiKelime.id);
+    setState(() {
+      final index = _kelimeler.indexWhere(
+        (element) => element.id == oAnkiKelime.id,
+      );
+      var degistirilecekKelime = _kelimeler[index];
+      degistirilecekKelime.isLearned = !degistirilecekKelime.isLearned;
+      _kelimeler[index] = degistirilecekKelime;
     });
   }
 
@@ -49,7 +66,7 @@ class _WordListState extends State<WordList> {
               }
               if (snapshot.hasData) {
                 return snapshot.data?.length == 0
-                    ? Center(child: Text("Lütfen kelime ekleyiniz"))
+                    ? Center(child: Text("Please add words"))
                     : _buildListView(snapshot.data!);
               } else {
                 return SizedBox();
@@ -64,6 +81,7 @@ class _WordListState extends State<WordList> {
   _buildListView(List<Word> data) {
     _kelimeler = data;
     return ListView.builder(
+      reverse: true,
       itemBuilder: (context, index) {
         var oAnkiKelime = _kelimeler[index];
         return Padding(
@@ -101,17 +119,31 @@ class _WordListState extends State<WordList> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Icon(Icons.lightbulb),
-                                SizedBox(width: 8,),
-                                Text("Hatırlatıcı Not"),
+                                SizedBox(width: 8),
+                                Text("Reminder Note"),
                               ],
                             ),
-                            SizedBox(height: 4,),
+                            SizedBox(height: 4),
                             Padding(
                               padding: const EdgeInsets.all(2.0),
-                              child: Text(oAnkiKelime.story ?? "Deneme", style: TextStyle(fontSize: 16),),
+                              child: Text(
+                                oAnkiKelime.story ?? "",
+                                style: TextStyle(fontSize: 16),
+                              ),
                             ),
                           ],
                         ),
+                      ),
+                    ),
+                  SizedBox(height: 10,),
+                  if (oAnkiKelime.imageBytes != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.memory(
+                        Uint8List.fromList(oAnkiKelime.imageBytes!),
+                        height: 150,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
                       ),
                     ),
                 ],
@@ -124,15 +156,4 @@ class _WordListState extends State<WordList> {
     );
   }
 
-  void _toggleUpdateWord(Word oAnkiKelime) async {
-    await widget.isarService.toogleWordLearned(oAnkiKelime.id);
-    setState(() {
-      final index = _kelimeler.indexWhere(
-        (element) => element.id == oAnkiKelime.id,
-      );
-      var degistirilecekKelime = _kelimeler[index];
-      degistirilecekKelime.isLearned = !degistirilecekKelime.isLearned;
-      _kelimeler[index] = degistirilecekKelime;
-    });
-  }
 }

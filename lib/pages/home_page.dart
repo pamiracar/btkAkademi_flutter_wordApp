@@ -18,25 +18,25 @@ class _HomePageState extends State<HomePage> {
   List<Widget> getScreens(){
     return [
       WordList(isarService: widget.isarService,),
-      AddWordScreen(),
+      AddWordScreen(isarService: widget.isarService,),
     ];
   }
 
-  int _selectedScreen = 0;
+  int selectedScreen = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Kelimelerim"),),
-      body: getScreens()[_selectedScreen],
+      appBar: AppBar(title: const Text("My Words"),),
+      body: getScreens()[selectedScreen],
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedScreen,
+        selectedIndex: selectedScreen,
         destinations: [
-          NavigationDestination(icon: Icon(Icons.list_alt), label: "Kelimeler"),
-          NavigationDestination(icon: Icon(Icons.add_circle_outline), label: "Ekle")
+          NavigationDestination(icon: Icon(Icons.list_alt), label: "Words"),
+          NavigationDestination(icon: Icon(Icons.add_circle_outline), label: "Add")
         ],
         onDestinationSelected: (value) {
           setState(() {
-            _selectedScreen = value;
+            selectedScreen = value;
           });
         },
       )

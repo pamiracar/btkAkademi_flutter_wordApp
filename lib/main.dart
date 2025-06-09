@@ -9,7 +9,7 @@ void main() async {
   final isarService = IsarService();
   try{
     await isarService.init();
-    //Word eklenecekKelime = Word(englishWord: "Student", turkishWord: "Öğrenci", wordType: "noun");
+    //Word eklenecekKelime = Word(englishWord: "Dictionary", turkishWord: "Sözlük", wordType: "noun");
     //isarService.saveWord(eklenecekKelime);
     final words = await isarService.getAllWords();
     debugPrint(words.toString());
