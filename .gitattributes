@@ -1,11 +1,9 @@
-# Android ve iOS platform klasörlerini dışla
 android/** linguist-vendored
 ios/** linguist-vendored
 macos/** linguist-vendored
 windows/** linguist-vendored
 linux/** linguist-vendored
 web/** linguist-vendored
-# build ve dart_tool klasörleri zaten genelde gitignore’da olur ama eklemek zarar vermez
 build/** linguist-vendored
 .dart_tool/** linguist-vendored
 
