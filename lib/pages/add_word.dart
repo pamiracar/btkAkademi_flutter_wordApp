@@ -180,6 +180,7 @@ class _AddWordScreenState extends State<AddWordScreen> {
                         child: Image.file(
                           _imageFile!,
                           height: 230,
+                          width: double.infinity,
                           fit: BoxFit.cover,
                         ),
                       ),

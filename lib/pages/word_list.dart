@@ -17,13 +17,11 @@ class _WordListState extends State<WordList> {
   late Future<List<Word>> _getAllWords;
   List<Word> _kelimeler = [];
 
-
   @override
   void initState() {
     super.initState();
     _getAllWords = _getWordsFromDB();
   }
-
 
   Future<List<Word>> _getWordsFromDB() async {
     return await widget.isarService.getAllWords();
@@ -45,6 +43,12 @@ class _WordListState extends State<WordList> {
       degistirilecekKelime.isLearned = !degistirilecekKelime.isLearned;
       _kelimeler[index] = degistirilecekKelime;
     });
+  }
+
+  void _deleteWord(Word oAnkiKelimed) async {
+    await widget.isarService.deleteWord(oAnkiKelimed.id);
+    _kelimeler.removeWhere((element) => element.id == oAnkiKelimed.id,);
+    debugPrint("liste boyutu ${_kelimeler.length}");
   }
 
   @override
@@ -80,8 +84,8 @@ class _WordListState extends State<WordList> {
 
   _buildListView(List<Word> data) {
     _kelimeler = data.reversed.toList();
+    debugPrint("Kelimeler liste uzunluğu ${_kelimeler.length}");
     return ListView.builder(
-
       itemBuilder: (context, index) {
         var oAnkiKelime = _kelimeler[index];
         return Dismissible(
@@ -89,8 +93,34 @@ class _WordListState extends State<WordList> {
           direction: DismissDirection.endToStart,
           onDismissed: (direction) => _deleteWord(oAnkiKelime),
           confirmDismiss: (direction) async {
-            return await Future.value(true);
+            return await showDialog(context: context, builder: (context) {
+              return AlertDialog(
+                title: Text("Kelime Sil"),
+                content: Text("${oAnkiKelime.englishWord} kelimesini silmek istediğinize emin misiniz?"),
+                actions: [
+                  TextButton(onPressed: () {
+                    Navigator.of(context).pop(false);
+                  }, child: Text("Cancel")),
+                  TextButton(onPressed: () {
+                    Navigator.of(context).pop(true);
+                  }, child: Text("Delete"))
+                ],
+              );
+            },);
           },
+          background: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Theme.of(context).colorScheme.errorContainer,
+            ),
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.only(right: 20),
+            child: Icon(
+              Icons.delete_forever_outlined,
+              size: 100,
+              color: Theme.of(context).colorScheme.error,
+            ),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -114,7 +144,9 @@ class _WordListState extends State<WordList> {
                         oAnkiKelime.story!.isNotEmpty)
                       Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.secondaryContainer,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Padding(
@@ -142,13 +174,13 @@ class _WordListState extends State<WordList> {
                           ),
                         ),
                       ),
-                    SizedBox(height: 10,),
+                    SizedBox(height: 10),
                     if (oAnkiKelime.imageBytes != null)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
                         child: Image.memory(
                           Uint8List.fromList(oAnkiKelime.imageBytes!),
-                          height: 150,
+                          height: 230,
                           width: double.infinity,
                           fit: BoxFit.cover,
                         ),
@@ -164,9 +196,5 @@ class _WordListState extends State<WordList> {
     );
   }
 
-  void _deleteWord(Word oAnkiKelimed) async{
-    await widget.isarService.deleteWord(oAnkiKelimed.id);
-
-  }
 
 }
