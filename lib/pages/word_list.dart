@@ -268,8 +268,8 @@ class _WordListState extends State<WordList> {
                 ),
               ],
             ),
-            SizedBox(height: 10,),
-
+            SizedBox(height:5),
+            Divider(),
             SwitchListTile(
               value: _showLearned,
               onChanged: (value) {

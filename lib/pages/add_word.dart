@@ -17,7 +17,7 @@ class AddWordScreen extends StatefulWidget {
     super.key,
     required this.isarService,
     required this.onSave,
-    required this.wordToEdit
+    required this.wordToEdit,
   });
 
   @override
@@ -46,16 +46,14 @@ class _AddWordScreenState extends State<AddWordScreen> {
   @override
   void initState() {
     super.initState();
-    if(widget.wordToEdit != null){
+    if (widget.wordToEdit != null) {
       var guncellenecekKelime = widget.wordToEdit;
       _englishController.text = guncellenecekKelime!.englishWord;
       _turkishController.text = guncellenecekKelime.turkishWord;
       _storyController.text = guncellenecekKelime.story!;
       _selectedWordType = guncellenecekKelime.wordType;
       _isLearned = guncellenecekKelime.isLearned;
-
     }
-
   }
 
   @override
@@ -95,7 +93,6 @@ class _AddWordScreenState extends State<AddWordScreen> {
       widget.onSave();
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -190,17 +187,17 @@ class _AddWordScreenState extends State<AddWordScreen> {
                       icon: Icon(Icons.image),
                     ),
                     SizedBox(height: 10),
-                    if (_imageFile != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.file(
-                          _imageFile!,
-                          height: 230,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                  ],
+                    if (_imageFile != null || widget.wordToEdit?.imageBytes != null) ... [
+                      if (_imageFile != null) ... [
+                        SizedBox(height: 5),
+                        ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(_imageFile!, height: 230, width: double.infinity, fit: BoxFit.cover)),
+                      ]
+                      else if(widget.wordToEdit?.imageBytes != null) ... [
+                        SizedBox(height: 5),
+                        ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.memory(Uint8List.fromList(widget.wordToEdit!.imageBytes!), height: 230, width: double.infinity, fit: BoxFit.cover,),),
+                      ]
+                    ],
+                  ]
                 ),
               ),
             ),
@@ -213,7 +210,9 @@ class _AddWordScreenState extends State<AddWordScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text("Save Word"),
+              child: widget.wordToEdit == null
+                  ? const Text("Save Word")
+                  : const Text("Update Word"),
             ),
           ],
         ),

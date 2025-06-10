@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
           ).showSnackBar(SnackBar(content: Text("Kelime kaydedildi")));
           setState(() {
             selectedScreen = 0;
+            _wordToEdit = null;
           });
         },
       ),
@@ -62,6 +63,8 @@ class _HomePageState extends State<HomePage> {
         onDestinationSelected: (value) {
           setState(() {
             selectedScreen = value;
+            if(selectedScreen == 0)
+              _wordToEdit = null;
           });
         },
       ),
