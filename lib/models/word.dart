@@ -14,6 +14,7 @@ class Word {
     required this.englishWord,
     required this.turkishWord,
     required this.wordType,
+    this.isLearned = false,
     this.story,
     this.imageBytes
   });

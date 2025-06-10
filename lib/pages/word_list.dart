@@ -49,14 +49,16 @@ class _WordListState extends State<WordList> {
   }
 
   Future<List<Word>> _getWordsFromDB() async {
-    return await widget.isarService.getAllWords();
+    var dbDenGelenKelimler = await widget.isarService.getAllWords();
+    _kelimeler = dbDenGelenKelimler;
+    return dbDenGelenKelimler;
   }
 
-  void _refreshWords() {
-    setState(() {
-      _getAllWords = _getWordsFromDB();
-    });
-  }
+ // void _refreshWords() {
+   // setState(() {
+    //  _getAllWords = _getWordsFromDB();
+    //});
+  //}
 
   void _toggleUpdateWord(Word oAnkiKelime) async {
     await widget.isarService.toogleWordLearned(oAnkiKelime.id);
@@ -111,7 +113,6 @@ class _WordListState extends State<WordList> {
   }
 
   _buildListView(List<Word> data) {
-    _kelimeler = data.reversed.toList();
     _applyFilter();
     debugPrint("Kelimeler liste uzunluğu ${_filtrelenmisKelimeler.length}");
     return ListView.builder(

@@ -78,18 +78,25 @@ class _AddWordScreenState extends State<AddWordScreen> {
       var _englishWord = _englishController.text;
       var _turkishWord = _turkishController.text;
       var _story = _storyController.text;
-
-      await widget.isarService.saveWord(
-        Word(
-          englishWord: _englishWord,
-          turkishWord: _turkishWord,
-          wordType: _selectedWordType,
-          story: _story,
-          imageBytes: _imageFile != null
-              ? await _imageFile!.readAsBytes()
-              : null,
-        ),
+      var kelime = Word(
+        englishWord: _englishWord,
+        turkishWord: _turkishWord,
+        wordType: _selectedWordType,
+        story: _story,
+        isLearned: _isLearned,
       );
+      if (widget.wordToEdit == null) {
+        kelime.imageBytes = _imageFile != null
+            ? await _imageFile!.readAsBytes()
+            : null;
+        await widget.isarService.saveWord(kelime);
+      } else {
+        kelime.id = widget.wordToEdit!.id;
+        kelime.imageBytes = _imageFile != null
+            ? await _imageFile!.readAsBytes()
+            : widget.wordToEdit?.imageBytes;
+        await widget.isarService.updateWord(kelime);
+      }
       widget.onSave();
     }
   }
@@ -187,17 +194,33 @@ class _AddWordScreenState extends State<AddWordScreen> {
                       icon: Icon(Icons.image),
                     ),
                     SizedBox(height: 10),
-                    if (_imageFile != null || widget.wordToEdit?.imageBytes != null) ... [
-                      if (_imageFile != null) ... [
+                    if (_imageFile != null ||
+                        widget.wordToEdit?.imageBytes != null) ...[
+                      if (_imageFile != null) ...[
                         SizedBox(height: 5),
-                        ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(_imageFile!, height: 230, width: double.infinity, fit: BoxFit.cover)),
-                      ]
-                      else if(widget.wordToEdit?.imageBytes != null) ... [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.file(
+                            _imageFile!,
+                            height: 230,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ] else if (widget.wordToEdit?.imageBytes != null) ...[
                         SizedBox(height: 5),
-                        ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.memory(Uint8List.fromList(widget.wordToEdit!.imageBytes!), height: 230, width: double.infinity, fit: BoxFit.cover,),),
-                      ]
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.memory(
+                            Uint8List.fromList(widget.wordToEdit!.imageBytes!),
+                            height: 230,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ],
                     ],
-                  ]
+                  ],
                 ),
               ),
             ),
