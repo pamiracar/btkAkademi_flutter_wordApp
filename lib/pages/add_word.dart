@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_word_app/models/word.dart';
 import 'package:flutter_word_app/pages/word_list.dart';
@@ -9,7 +11,13 @@ import 'package:flutter_word_app/pages/home_page.dart';
 
 class AddWordScreen extends StatefulWidget {
   final IsarService isarService;
-  const AddWordScreen({super.key, required this.isarService});
+  final VoidCallback onSave;
+
+  const AddWordScreen({
+    super.key,
+    required this.isarService,
+    required this.onSave,
+  });
 
   @override
   State<AddWordScreen> createState() => _AddWordScreenState();
@@ -63,16 +71,20 @@ class _AddWordScreenState extends State<AddWordScreen> {
           turkishWord: _turkishWord,
           wordType: _selectedWordType,
           story: _story,
-          imageBytes: _imageFile != null ? await _imageFile!.readAsBytes() : null,
+          imageBytes: _imageFile != null
+              ? await _imageFile!.readAsBytes()
+              : null,
         ),
       );
+      widget.onSave();
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(15.0),
       child: Form(
         key: _formKey,
         child: ListView(
@@ -87,20 +99,6 @@ class _AddWordScreenState extends State<AddWordScreen> {
               controller: _englishController,
               decoration: InputDecoration(
                 labelText: "English Word",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "Please enter turkish word";
-                }
-                return null;
-              },
-              controller: _turkishController,
-              decoration: InputDecoration(
-                labelText: "Turkish Word",
                 border: OutlineInputBorder(),
               ),
             ),
@@ -122,6 +120,20 @@ class _AddWordScreenState extends State<AddWordScreen> {
             ),
             SizedBox(height: 10),
             TextFormField(
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Please enter turkish word";
+                }
+                return null;
+              },
+              controller: _turkishController,
+              decoration: InputDecoration(
+                labelText: "Turkish Word",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextFormField(
               controller: _storyController,
               decoration: InputDecoration(
                 labelText: "Word Story",
@@ -129,30 +141,63 @@ class _AddWordScreenState extends State<AddWordScreen> {
               ),
               maxLines: 3,
             ),
-            Row(
-              children: [
-                Text("Learned"),
-                Switch(
-                  value: _isLearned,
-                  onChanged: (value) {
-                    setState(() {
-                      _isLearned = !_isLearned;
-                    });
-                  },
+            SizedBox(height: 8),
+            Card(
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    title: Text("Learned"),
+                    value: _isLearned,
+                    onChanged: (value) {
+                      setState(() {
+                        _isLearned = !_isLearned;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: _resimSec,
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      label: Center(child: Text("Add Image")),
+                      icon: Icon(Icons.image),
+                    ),
+                    SizedBox(height: 10),
+                    if (_imageFile != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(
+                          _imageFile!,
+                          height: 230,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                  ],
                 ),
-              ],
+              ),
             ),
+
             SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: _resimSec,
-              label: Text("Add image"),
-              icon: Icon(Icons.image),
+            ElevatedButton(
+              onPressed: _saveWord,
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text("Save Word"),
             ),
-            SizedBox(height: 10),
-            if (_imageFile != null)
-              Image.file(_imageFile!, height: 150, fit: BoxFit.cover),
-            SizedBox(height: 10),
-            ElevatedButton(onPressed: _saveWord, child: Text("Save Word")),
           ],
         ),
       ),

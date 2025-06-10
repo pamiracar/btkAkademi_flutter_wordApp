@@ -79,74 +79,82 @@ class _WordListState extends State<WordList> {
   }
 
   _buildListView(List<Word> data) {
-    _kelimeler = data;
+    _kelimeler = data.reversed.toList();
     return ListView.builder(
-      reverse: true,
+
       itemBuilder: (context, index) {
         var oAnkiKelime = _kelimeler[index];
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  ListTile(
-                    title: Text(oAnkiKelime.englishWord),
-                    subtitle: Text(oAnkiKelime.turkishWord),
-                    leading: Chip(label: Text(oAnkiKelime.wordType)),
-                    trailing: Switch(
-                      value: oAnkiKelime.isLearned,
-                      onChanged: (value) => _toggleUpdateWord(oAnkiKelime),
-                    ),
-                  ),
-                  if (oAnkiKelime.story != null &&
-                      oAnkiKelime.story!.isNotEmpty)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(10),
+        return Dismissible(
+          key: UniqueKey(),
+          direction: DismissDirection.endToStart,
+          onDismissed: (direction) => _deleteWord(oAnkiKelime),
+          confirmDismiss: (direction) async {
+            return await Future.value(true);
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(oAnkiKelime.englishWord),
+                      subtitle: Text(oAnkiKelime.turkishWord),
+                      leading: Chip(label: Text(oAnkiKelime.wordType)),
+                      trailing: Switch(
+                        value: oAnkiKelime.isLearned,
+                        onChanged: (value) => _toggleUpdateWord(oAnkiKelime),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(Icons.lightbulb),
-                                SizedBox(width: 8),
-                                Text("Reminder Note"),
-                              ],
-                            ),
-                            SizedBox(height: 4),
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Text(
-                                oAnkiKelime.story ?? "",
-                                style: TextStyle(fontSize: 16),
+                    ),
+                    if (oAnkiKelime.story != null &&
+                        oAnkiKelime.story!.isNotEmpty)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.lightbulb),
+                                  SizedBox(width: 8),
+                                  Text("Reminder Note"),
+                                ],
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 4),
+                              Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Text(
+                                  oAnkiKelime.story ?? "",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  SizedBox(height: 10,),
-                  if (oAnkiKelime.imageBytes != null)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.memory(
-                        Uint8List.fromList(oAnkiKelime.imageBytes!),
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
+                    SizedBox(height: 10,),
+                    if (oAnkiKelime.imageBytes != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.memory(
+                          Uint8List.fromList(oAnkiKelime.imageBytes!),
+                          height: 150,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -154,6 +162,11 @@ class _WordListState extends State<WordList> {
       },
       itemCount: data.length,
     );
+  }
+
+  void _deleteWord(Word oAnkiKelimed) async{
+    await widget.isarService.deleteWord(oAnkiKelimed.id);
+
   }
 
 }

@@ -18,7 +18,14 @@ class _HomePageState extends State<HomePage> {
   List<Widget> getScreens(){
     return [
       WordList(isarService: widget.isarService,),
-      AddWordScreen(isarService: widget.isarService,),
+      AddWordScreen(isarService: widget.isarService,onSave:() {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Kelime kaydedildi")),
+        );
+        setState(() {
+          selectedScreen = 0;
+        });
+      },),
     ];
   }
 
