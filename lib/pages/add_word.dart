@@ -12,11 +12,12 @@ import 'package:flutter_word_app/pages/home_page.dart';
 class AddWordScreen extends StatefulWidget {
   final IsarService isarService;
   final VoidCallback onSave;
-
+  final Word? wordToEdit;
   const AddWordScreen({
     super.key,
     required this.isarService,
     required this.onSave,
+    required this.wordToEdit
   });
 
   @override
@@ -41,6 +42,21 @@ class _AddWordScreenState extends State<AddWordScreen> {
     "Phrasal Verb",
     "Idiom",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.wordToEdit != null){
+      var guncellenecekKelime = widget.wordToEdit;
+      _englishController.text = guncellenecekKelime!.englishWord;
+      _turkishController.text = guncellenecekKelime.turkishWord;
+      _storyController.text = guncellenecekKelime.story!;
+      _selectedWordType = guncellenecekKelime.wordType;
+      _isLearned = guncellenecekKelime.isLearned;
+
+    }
+
+  }
 
   @override
   void dispose() {

@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
       WordList(isarService: widget.isarService, onEditWord: _editWord),
       AddWordScreen(
         isarService: widget.isarService,
-        wordToEdit = _wordToEdit;
+        wordToEdit: _wordToEdit,
         onSave: () {
           ScaffoldMessenger.of(
             context,

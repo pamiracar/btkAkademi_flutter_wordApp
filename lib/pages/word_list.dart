@@ -162,6 +162,7 @@ class _WordListState extends State<WordList> {
             ),
           ),
           child: GestureDetector(
+            onTap: () => widget.onEditWord(oAnkiKelime),
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
